@@ -145,34 +145,55 @@ exports.UserForm = void 0;
 
 var UserForm = /*#__PURE__*/function () {
   function UserForm(parent, model) {
+    var _this = this;
+
     _classCallCheck(this, UserForm);
 
     this.parent = parent;
     this.model = model;
+
+    this.onSetNameClick = function () {
+      var input = _this.parent.querySelector('input'); //Avoiids undefined error
+
+
+      if (input) {
+        var name = input.value;
+
+        _this.model.set({
+          name: name
+        });
+      }
+    }; //Anytime define event handler, use arrow function to avoid undefined error
+
+
+    this.onSetAgeClick = function () {
+      _this.model.setRandomAge();
+    };
+
+    this.bindModel();
   }
 
   _createClass(UserForm, [{
+    key: "bindModel",
+    value: function bindModel() {
+      var _this2 = this;
+
+      this.model.on('change', function () {
+        _this2.render();
+      });
+    }
+  }, {
     key: "eventsMap",
     value: function eventsMap() {
       return {
-        'click:button': this.onButtonClick,
-        'mouseenter:h1': this.onHeaderHover
+        'click:.set-age': this.onSetAgeClick,
+        'click:.set-name': this.onSetNameClick
       };
-    }
-  }, {
-    key: "onHeaderHover",
-    value: function onHeaderHover() {
-      console.log('hovered');
-    }
-  }, {
-    key: "onButtonClick",
-    value: function onButtonClick() {
-      console.log('Hi There');
     }
   }, {
     key: "template",
     value: function template() {
-      return "\n      <div>\n        <h1>User Form</h1>\n        <div>User name: ".concat(this.model.get('name'), "</div>\n        <div>User name: ").concat(this.model.get('age'), "</div>\n        <input />\n        <button>Click Me</button>\n      </div>\n    ");
+      return "\n      <div>\n        <h1>User Form</h1>\n        <div>User name: ".concat(this.model.get('name'), "</div>\n        <div>User name: ").concat(this.model.get('age'), "</div>\n        <input />\n        <button class=\"set-name\">Change Name</button>\n        <button class=\"set-age\">Set Random Age</button>\n      </div>\n    ");
     }
   }, {
     key: "bindEvents",
@@ -197,6 +218,8 @@ var UserForm = /*#__PURE__*/function () {
   }, {
     key: "render",
     value: function render() {
+      //Removes duplicate html
+      this.parent.innerHTML = '';
       var templateElement = document.createElement('template');
       templateElement.innerHTML = this.template();
       this.bindEvents(templateElement.content);
@@ -2619,7 +2642,15 @@ var User = /*#__PURE__*/function (_Model_1$Model) {
     return _super.apply(this, arguments);
   }
 
-  _createClass(User, null, [{
+  _createClass(User, [{
+    key: "setRandomAge",
+    value: function setRandomAge() {
+      var age = Math.round(Math.random() * 100);
+      this.set({
+        age: age
+      });
+    }
+  }], [{
     key: "buildUser",
     value: function buildUser(attrs) {
       return new User(new Attributes_1.Attributes(attrs), new Eventing_1.Eventing(), new ApiSync_1.ApiSync(rootUrl));
@@ -2652,8 +2683,14 @@ var user = User_1.User.buildUser({
   name: 'NAME',
   age: 20
 });
-var userForm = new UserForm_1.UserForm(document.getElementById('root'), user);
-userForm.render();
+var root = document.getElementById('root');
+
+if (root) {
+  var userForm = new UserForm_1.UserForm(root, user);
+  userForm.render();
+} else {
+  throw new Error('Root element not found');
+}
 },{"./views/UserForm":"src/views/UserForm.ts","./models/User":"src/models/User.ts"}],"../../../../Users/jasonklipple/.nvm/versions/node/v16.13.1/lib/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
@@ -2682,7 +2719,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51289" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "49313" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

@@ -1,21 +1,38 @@
 import { User } from "../models/User";
 
 export class UserForm {
-  constructor(public parent: Element, public model: User) {}
+  constructor(public parent: Element, public model: User) {
+    this.bindModel();
+  }
 
-  eventsMap(): {[key: string]: () => void} {
+  bindModel(): void {
+    this.model.on('change', () => {
+      this.render();
+    })
+  }
+
+  eventsMap(): { [key: string]: () => void } {
     return {
-      'click:button': this.onButtonClick,
-      'mouseenter:h1': this.onHeaderHover
+      'click:.set-age': this.onSetAgeClick,
+      'click:.set-name': this.onSetNameClick
     };
   }
 
-  onHeaderHover(): void {
-    console.log('hovered');
+  onSetNameClick = (): void => {
+    const input = this.parent.querySelector('input');
+    //Avoiids undefined error
+    if (input) {
+
+      const name = input.value;
+      this.model.set({ name });
+
+    }
+
   }
 
-  onButtonClick(): void {
-    console.log('Hi There');
+  //Anytime define event handler, use arrow function to avoid undefined error
+  onSetAgeClick = (): void => {
+    this.model.setRandomAge();
   }
 
   template(): string {
@@ -25,14 +42,15 @@ export class UserForm {
         <div>User name: ${this.model.get('name')}</div>
         <div>User name: ${this.model.get('age')}</div>
         <input />
-        <button>Click Me</button>
+        <button class="set-name">Change Name</button>
+        <button class="set-age">Set Random Age</button>
       </div>
     `;
   }
 
   bindEvents(fragment: DocumentFragment): void {
     const eventsMap = this.eventsMap();
-    for(let eventKey in eventsMap) {
+    for (let eventKey in eventsMap) {
       const [eventName, selector] = eventKey.split(':');
 
       fragment.querySelectorAll(selector).forEach(element => {
@@ -42,6 +60,9 @@ export class UserForm {
   }
 
   render(): void {
+    //Removes duplicate html
+    this.parent.innerHTML = '';
+
     const templateElement = document.createElement('template');
     templateElement.innerHTML = this.template();
 
