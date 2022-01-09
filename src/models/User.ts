@@ -4,6 +4,7 @@ import { ApiSync } from './ApiSync';
 import { Eventing } from './Eventing';
 import { Collection } from './Collection';
 
+
 export interface UserProps {
   id?: number;
   name?: string;
@@ -12,6 +13,7 @@ export interface UserProps {
 
 const rootUrl = 'http://localhost:3000/users';
 
+//User Model
 export class User extends Model<UserProps> {
   static buildUser(attrs: UserProps): User {
     return new User(
